@@ -19,7 +19,7 @@ type IncomingSearchRequest struct {
 	Name          string
 	SortDirection string // ASC or DESC
 	SortBy        string // column that needs to be sorted
-    Page          int
+        Page          int
 	Size          int    // Limit size
 }
 
@@ -56,7 +56,7 @@ func (r *SearchRequest) SearchBy() *SearchBy {
 
 // struct used for filtering columns in the database
 type SearchByModel struct {
-    Ids           []string
+        Ids           []string
 	Name          []string
 	Size          int
 	Page          int
@@ -92,7 +92,7 @@ func (s *SearchBy) Filter() []filter.FilterFunc {
 }
 
 func main() {
-    request := SearchRequest{
+        request := SearchRequest{
 		Id:            "1",
 		Name:          "Kuncoro",
 		Size:          10,
