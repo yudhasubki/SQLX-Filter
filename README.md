@@ -1,6 +1,6 @@
 # Sqlx Filter
 
-sqlxfilter is a simple package that helps a user to generate clauses, sort by, limit, offset, or group by query—using an option's function to make it easy.
+sqlxfilter is a simple package that helps a user to generate clauses, sort by, limit, offset, or group by query—using an option's function to make it easy. This package purpose to implementing [sqlx](https://github.com/jmoiron/sqlx)
 
 ## Installation
 
