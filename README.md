@@ -51,7 +51,7 @@ func (r *SearchRequest) SearchBy() *SearchBy {
 
 // struct used for filtering columns in the database
 type SearchByModel struct {
-    Ids           []string
+        Ids           []string
 	Name          []string
 	Size          int
 	Page          int
@@ -88,15 +88,15 @@ func main() {
 		Size:          10,
 		SortDirection: "asc",
 		SortBy:        "name",
-	}
+    }
 
-	f := filter.New(request.SearchBy().Filter()...)
+    f := filter.New(request.SearchBy().Filter()...)
 
     f.QueryClause("OR") // output : args = [[1] [Kuncoro]] || query = id IN(?) OR name IN(?)
     
     f.SortBy() // ORDER BY name ASC
 
-	f.Limit() // LIMIT 10
+    f.Limit() // LIMIT 10
 }
 ```
 
