@@ -19,6 +19,7 @@ type IncomingSearchRequest struct {
 	Name          string
 	SortDirection string // ASC or DESC
 	SortBy        string // column that needs to be sorted
+    Page          int
 	Size          int    // Limit size
 }
 
@@ -38,6 +39,10 @@ func (r *SearchRequest) SearchBy() *SearchBy {
 		searchBy.Size = r.Size
 	}
 
+	if r.Page > 0 {
+		searchBy.Page = r.Page
+	}
+
 	if r.SortDirection != "" {
 		searchBy.SortDirection = r.SortDirection
 	}
@@ -51,7 +56,7 @@ func (r *SearchRequest) SearchBy() *SearchBy {
 
 // struct used for filtering columns in the database
 type SearchByModel struct {
-        Ids           []string
+    Ids           []string
 	Name          []string
 	Size          int
 	Page          int
@@ -75,6 +80,10 @@ func (s *SearchBy) Filter() []filter.FilterFunc {
 		fn = append(fn, filter.Limit(s.Size))
 	}
 
+	if s.Page > 0 && s.Size > 0 {
+		fn = append(fn, filter.Paginate(s.Size, s.Page))
+	}
+
 	if s.SortDirection != "" && s.SortBy != "" {
 		fn = append(fn, filter.OrderBy(s.SortDirection, s.SortBy))
 	}
@@ -85,18 +94,31 @@ func (s *SearchBy) Filter() []filter.FilterFunc {
 func main() {
     request := SearchRequest{
 		Id:            "1",
+		Name:          "Kuncoro",
 		Size:          10,
+		Page:          5,
 		SortDirection: "asc",
 		SortBy:        "name",
-    }
+	}
 
-    f := filter.New(request.SearchBy().Filter()...)
+	query := "SELECT * FROM"
 
-    f.QueryClause("OR") // output : args = [[1] [Kuncoro]] || query = id IN(?) OR name IN(?)
-    
-    f.SortBy() // ORDER BY name ASC
+	f := filter.New(request.SearchBy().Filter()...)
 
-    f.Limit() // LIMIT 10
+	args, clause := f.QueryClause("OR")
+	if len(args) > 0 {
+		query += " WHERE " + clause
+	}
+
+	if f.SortBy() != "" {
+		query += f.SortBy()
+	}
+
+	if f.Paginate() != "" {
+		query += f.Paginate()
+	}
+
+	fmt.Println(query) // SELECT * FROM WHERE id IN(?) OR name IN(?) ORDER BY name ASC LIMIT 10 OFFSET 40
 }
 ```
 

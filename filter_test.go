@@ -13,6 +13,7 @@ type SearchRequest struct {
 	SortDirection string
 	SortBy        string
 	Size          int
+	Page          int
 }
 
 func (r *SearchRequest) SearchBy() *SearchBy {
@@ -28,6 +29,10 @@ func (r *SearchRequest) SearchBy() *SearchBy {
 
 	if r.Size > 0 {
 		searchBy.Size = r.Size
+	}
+
+	if r.Page > 0 {
+		searchBy.Page = r.Page
 	}
 
 	if r.SortDirection != "" {
@@ -65,6 +70,10 @@ func (s *SearchBy) Filter() []filter.FilterFunc {
 		fn = append(fn, filter.Limit(s.Size))
 	}
 
+	if s.Page > 0 && s.Size > 0 {
+		fn = append(fn, filter.Paginate(s.Size, s.Page))
+	}
+
 	if s.SortDirection != "" && s.SortBy != "" {
 		fn = append(fn, filter.OrderBy(s.SortDirection, s.SortBy))
 	}
@@ -77,13 +86,27 @@ func TestFilter(t *testing.T) {
 		Id:            "1",
 		Name:          "Kuncoro",
 		Size:          10,
+		Page:          5,
 		SortDirection: "asc",
 		SortBy:        "name",
 	}
 
+	query := "SELECT * FROM"
+
 	f := filter.New(request.SearchBy().Filter()...)
 
-	fmt.Println(f.QueryClause("OR"))
-	fmt.Println("Sort Query", f.SortBy())
-	fmt.Println("Limit Query", f.Limit())
+	args, clause := f.QueryClause("OR")
+	if len(args) > 0 {
+		query += " WHERE " + clause
+	}
+
+	if f.SortBy() != "" {
+		query += f.SortBy()
+	}
+
+	if f.Paginate() != "" {
+		query += f.Paginate()
+	}
+
+	fmt.Println(query)
 }

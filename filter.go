@@ -49,7 +49,7 @@ func (f *Filter) Limit() string {
 		return ""
 	}
 
-	return fmt.Sprintf("LIMIT %d", f.limit.Size)
+	return fmt.Sprintf(" LIMIT %d", f.limit.Size)
 }
 
 // Paginate function that generate limit query and its offset.
@@ -60,7 +60,7 @@ func (f Filter) Paginate() string {
 
 	offset := (f.limit.Page - 1) * f.limit.Size
 
-	return fmt.Sprintf("LIMIT %d OFFSET %d", f.limit.Size, offset)
+	return fmt.Sprintf(" LIMIT %d OFFSET %d", f.limit.Size, offset)
 }
 
 // SortBy function that generate Order By query.
@@ -69,7 +69,7 @@ func (o Filter) SortBy() string {
 		return ""
 	}
 
-	return fmt.Sprintf("ORDER BY %s %s", strings.Join(o.order.Columns, ","), o.Direction)
+	return fmt.Sprintf(" ORDER BY %s %s", strings.Join(o.order.Columns, ","), o.Direction)
 }
 
 // Group function that generate Group By column.
@@ -78,7 +78,7 @@ func (o Filter) Group() string {
 		return ""
 	}
 
-	return fmt.Sprintf("GROUP BY %s", strings.Join(o.group.Columns, ","))
+	return fmt.Sprintf(" GROUP BY %s", strings.Join(o.group.Columns, ","))
 }
 
 type condition struct {
